@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCO_NetMon", "WCO_NetMon.csproj", "{2241B573-654A-4F94-99DE-6439F919D5EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2241B573-654A-4F94-99DE-6439F919D5EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2241B573-654A-4F94-99DE-6439F919D5EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2241B573-654A-4F94-99DE-6439F919D5EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2241B573-654A-4F94-99DE-6439F919D5EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3BBB529A-84ED-4F86-96A3-89642CA0855C}
+	EndGlobalSection
+EndGlobal

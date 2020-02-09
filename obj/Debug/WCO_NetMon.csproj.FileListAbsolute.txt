@@ -1,0 +1,9 @@
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\WCO_NetMon.exe.config
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\WCO_NetMon.exe
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\WCO_NetMon.pdb
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.Properties.Resources.resources
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.csproj.GenerateResource.cache
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.exe
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.pdb
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.MainForm.resources
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.csprojAssemblyReference.cache
