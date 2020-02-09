@@ -43,6 +43,7 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.bttn_Quit = new System.Windows.Forms.Button();
             this.bttn_SaveReport = new System.Windows.Forms.Button();
+            this.saveReportFile = new System.Windows.Forms.SaveFileDialog();
             this.tabControl1.SuspendLayout();
             this.Import.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvLogFiles)).BeginInit();
@@ -102,7 +103,7 @@
             // 
             // bttn_LogFile
             // 
-            this.bttn_LogFile.Location = new System.Drawing.Point(7, 249);
+            this.bttn_LogFile.Location = new System.Drawing.Point(3, 247);
             this.bttn_LogFile.Name = "bttn_LogFile";
             this.bttn_LogFile.Size = new System.Drawing.Size(75, 51);
             this.bttn_LogFile.TabIndex = 0;
@@ -208,6 +209,13 @@
             this.bttn_SaveReport.TabIndex = 110;
             this.bttn_SaveReport.Text = "Save Report";
             this.bttn_SaveReport.UseVisualStyleBackColor = true;
+            this.bttn_SaveReport.Click += new System.EventHandler(this.bttn_SaveReport_Click);
+            // 
+            // saveReportFile
+            // 
+            this.saveReportFile.Filter = "Text Files (*.txt)|*.txt|All files (*.*)|*.*";
+            this.saveReportFile.FilterIndex = 0;
+            this.saveReportFile.Title = "Report File to Save To";
             // 
             // MainForm
             // 
@@ -250,6 +258,7 @@
         private System.Windows.Forms.DataGridView dgvLogEvent;
         private System.Windows.Forms.DataGridView dgvLogByMach;
         private System.Windows.Forms.Button bttn_SaveReport;
+        private System.Windows.Forms.SaveFileDialog saveReportFile;
     }
 }
 

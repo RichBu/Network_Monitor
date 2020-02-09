@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace WCO_NetMon
 {
@@ -108,7 +109,7 @@ namespace WCO_NetMon
             public List<bool> machStat { get; set; }  //machine status
         }
 
-        ;
+
         public string ConvLogTimeToStr( string _LogTimeStr)
         {
             //converts the incoming log file's time string to standard time string that 
@@ -533,9 +534,119 @@ namespace WCO_NetMon
                 newRec.timeOnStr = "----------";
                 newRec.timeOffStr = "----------";
                 Disp_LogMachEvents_table.Add(newRec);
+
+                newRec = new Disp_LogMachEvents_rec();
+                newRec.machNum = "";
+                newRec.timeStartStr = "";
+                newRec.timeStopStr = "";
+                newRec.timeDiffStr = "";
+                newRec.timeOnStr = "";
+                newRec.timeOffStr = "";
+                Disp_LogMachEvents_table.Add(newRec);
             };
         }
 
+
+        public string StringFixedLength(string _strIn, int _finalLen, bool _leftJust, char _padChar)
+        {
+            //pads a string with spaces to a fixed width
+            //can pad from the left or the right
+            //use for reports or file output
+
+            string outVal;
+            string PadStr = new string(_padChar, _finalLen + 1);
+
+            if (_leftJust) outVal = LeftStr(_strIn + PadStr, _finalLen);
+            else outVal = RightStr(PadStr + _strIn, _finalLen);
+
+            return outVal;
+        }
+
+
+        public void SaveReportFile( string _ReportFileName,
+            List<LogFile_In_rec> _LogFile_In_table,
+            List<Disp_LogFiles_rec> _Disp_LogFile_table,
+            List<Disp_LogMachEvents_rec> _Disp_LogMachEvents_table
+            )
+        {
+            //saves the report file name
+            //first get the time frame
+            string ReportTimeStart;
+            string ReportTimeStop;
+
+            ReportTimeStart = ConvLogTimeToStr( _LogFile_In_table[0].timeInStr );
+            int LastLogRec = _LogFile_In_table.Count() - 1;
+            ReportTimeStop = ConvLogTimeToStr(_LogFile_In_table[LastLogRec].timeInStr);
+
+            StreamWriter sw = new StreamWriter(_ReportFileName);
+            sw.WriteLine("");
+            sw.WriteLine("               Network Monitoring Report - by machine");
+            sw.WriteLine("");
+            sw.WriteLine("Report Generated on : " + DateTime.Now.ToString("MM/dd/yyyy  hh:mm:ss") );
+            sw.WriteLine("");
+            sw.WriteLine("Time span in report : " + ReportTimeStart + " to " + ReportTimeStop);
+            sw.WriteLine("Log Files Read in   : ");
+
+            for (int i=0; i<_Disp_LogFile_table.Count(); i++)
+            {
+                string FileNum = StringFixedLength((i + 1).ToString().Trim(), 3, false, '0');
+                sw.WriteLine("     " + FileNum + "=" + _Disp_LogFile_table[i].fileName);
+            };
+            sw.WriteLine("");
+            sw.WriteLine("");
+
+            //setup columns widths for headers and data
+            List<int> ColWid = new List<int>();
+            ColWid.Add( 15 );  //mach num
+            ColWid.Add( 20 );  //start time
+            ColWid.Add( 20 );  //stop time
+            ColWid.Add( 15 );  //time diff
+            ColWid.Add( 15 );  //on time
+            ColWid.Add( 15 );  //off time
+
+            string ColHead00 = StringFixedLength("Machine", ColWid[0], true, ' ');
+            string ColHead01 = StringFixedLength("Start Time", ColWid[1], true, ' ');
+            string ColHead02 = StringFixedLength("Stop Time", ColWid[2], true, ' ');
+            string ColHead03 = StringFixedLength("Duration", ColWid[3], true, ' ');
+            string ColHead04 = StringFixedLength("On Time", ColWid[4], true, ' ');
+            string ColHead05 = StringFixedLength("Off Time", ColWid[5], true, ' ');
+            string HeaderStr = ColHead00 + " " + ColHead01 + " " + ColHead02 + " | " + ColHead03 + " | ";
+            HeaderStr = HeaderStr + ColHead04 + " " + ColHead05;
+            sw.WriteLine(HeaderStr);
+
+            ColHead00 = StringFixedLength("_", ColWid[0], true, '_');
+            ColHead01 = StringFixedLength("_", ColWid[1], true, '_');
+            ColHead02 = StringFixedLength("_", ColWid[2], true, '_');
+            ColHead03 = StringFixedLength("_", ColWid[3], true, '_');
+            ColHead04 = StringFixedLength("_", ColWid[4], true, '_');
+            ColHead05 = StringFixedLength("_", ColWid[5], true, '_');
+            HeaderStr = ColHead00 + " " + ColHead01 + " " + ColHead02 + " | " + ColHead03 + " | ";
+            HeaderStr = HeaderStr + ColHead04 + " " + ColHead05;
+            sw.WriteLine(HeaderStr);
+
+            //now loop thru all of the machine data
+            string LastMachNum="";
+            for (int i=0; i< _Disp_LogMachEvents_table.Count(); i++)
+            {
+                Disp_LogMachEvents_rec currRec = _Disp_LogMachEvents_table[i];
+                if ( currRec.machNum.Contains("M")) LastMachNum = LeftStr(currRec.machNum, 3);
+                string Col00 = StringFixedLength(currRec.machNum, ColWid[0], true, ' ');
+                string Col01 = StringFixedLength(currRec.timeStartStr, ColWid[1], true, ' ');
+                string Col02 = StringFixedLength(currRec.timeStopStr, ColWid[2], true, ' ');
+                string Col03 = StringFixedLength(currRec.timeDiffStr, ColWid[3], true, ' ');
+                string Col04 = StringFixedLength(currRec.timeOnStr, ColWid[4], true, ' ');
+                string tempStr = "";
+                if (currRec.machNum.Contains("total")) tempStr = " " + LastMachNum;
+                string Col05 = StringFixedLength(currRec.timeOffStr+tempStr, ColWid[5], true, ' ');
+                string RecStr = Col00 + " " + Col01 + " " + Col02 + " | " + Col03 + " | ";
+                RecStr = RecStr + Col04 + " " + Col05;
+                sw.WriteLine(RecStr);
+            };
+
+            sw.WriteLine("");
+            sw.Flush();
+            sw.Close();
+        }
 
         public string RightStr(string _strIn, int _length)
         {

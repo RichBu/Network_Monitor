@@ -294,5 +294,15 @@ namespace WCO_NetMon
             LogEventList_refresh();
             LogMachEvents_refresh();
         }
+
+        private void bttn_SaveReport_Click(object sender, EventArgs e)
+        {
+            //save the file
+            saveReportFile.InitialDirectory = openFileDialog.InitialDirectory;
+            saveReportFile.ShowDialog();
+            string Report_fileName = saveReportFile.FileName;
+            LogFiles.SaveReportFile(Report_fileName, LogFiles.LogFile_In_table, LogFiles.Disp_LogFile_table,
+                LogFiles.Disp_LogMachEvents_table);
+        }
     }
 }
