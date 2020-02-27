@@ -6,3 +6,9 @@ C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.cspr
 C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.exe
 C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.pdb
 C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.MainForm.resources
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\Newtonsoft.Json.dll
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\System.Net.Http.Formatting.dll
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\Newtonsoft.Json.xml
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\bin\Debug\System.Net.Http.Formatting.xml
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.csprojAssemblyReference.cache
+C:\Data\Proj-PLC-Monitoring\Prog-WCO_NetMon\WCO_NetMon\obj\Debug\WCO_NetMon.csproj.CopyComplete

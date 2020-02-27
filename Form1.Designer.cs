@@ -31,6 +31,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Import = new System.Windows.Forms.TabPage();
+            this.bttnSendToWeb = new System.Windows.Forms.Button();
             this.dgvLogFiles = new System.Windows.Forms.DataGridView();
             this.bttn_LogFile = new System.Windows.Forms.Button();
             this.logData = new System.Windows.Forms.TabPage();
@@ -39,10 +40,10 @@
             this.byTime = new System.Windows.Forms.TabPage();
             this.dgvLogEvent = new System.Windows.Forms.DataGridView();
             this.byMach = new System.Windows.Forms.TabPage();
+            this.bttn_SaveReport = new System.Windows.Forms.Button();
             this.dgvLogByMach = new System.Windows.Forms.DataGridView();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.bttn_Quit = new System.Windows.Forms.Button();
-            this.bttn_SaveReport = new System.Windows.Forms.Button();
             this.saveReportFile = new System.Windows.Forms.SaveFileDialog();
             this.tabControl1.SuspendLayout();
             this.Import.SuspendLayout();
@@ -80,6 +81,7 @@
             // 
             // Import
             // 
+            this.Import.Controls.Add(this.bttnSendToWeb);
             this.Import.Controls.Add(this.dgvLogFiles);
             this.Import.Controls.Add(this.bttn_LogFile);
             this.Import.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -90,6 +92,16 @@
             this.Import.TabIndex = 0;
             this.Import.Text = "Import";
             this.Import.UseVisualStyleBackColor = true;
+            // 
+            // bttnSendToWeb
+            // 
+            this.bttnSendToWeb.Location = new System.Drawing.Point(275, 244);
+            this.bttnSendToWeb.Name = "bttnSendToWeb";
+            this.bttnSendToWeb.Size = new System.Drawing.Size(116, 51);
+            this.bttnSendToWeb.TabIndex = 107;
+            this.bttnSendToWeb.Text = "Send To Web";
+            this.bttnSendToWeb.UseVisualStyleBackColor = true;
+            this.bttnSendToWeb.Click += new System.EventHandler(this.bttnSendToWeb_Click);
             // 
             // dgvLogFiles
             // 
@@ -175,6 +187,16 @@
             this.byMach.Text = "By Machine";
             this.byMach.UseVisualStyleBackColor = true;
             // 
+            // bttn_SaveReport
+            // 
+            this.bttn_SaveReport.Location = new System.Drawing.Point(210, 247);
+            this.bttn_SaveReport.Name = "bttn_SaveReport";
+            this.bttn_SaveReport.Size = new System.Drawing.Size(75, 51);
+            this.bttn_SaveReport.TabIndex = 110;
+            this.bttn_SaveReport.Text = "Save Report";
+            this.bttn_SaveReport.UseVisualStyleBackColor = true;
+            this.bttn_SaveReport.Click += new System.EventHandler(this.bttn_SaveReport_Click);
+            // 
             // dgvLogByMach
             // 
             this.dgvLogByMach.AllowUserToAddRows = false;
@@ -189,6 +211,7 @@
             // 
             this.openFileDialog.Filter = "Text Files (*.txt)|*.txt|All files (*.*)|*.*";
             this.openFileDialog.FilterIndex = 0;
+            this.openFileDialog.Multiselect = true;
             this.openFileDialog.Title = "Log File to Read";
             // 
             // bttn_Quit
@@ -200,16 +223,6 @@
             this.bttn_Quit.Text = "Quit";
             this.bttn_Quit.UseVisualStyleBackColor = true;
             this.bttn_Quit.Click += new System.EventHandler(this.bttn_Quit_Click);
-            // 
-            // bttn_SaveReport
-            // 
-            this.bttn_SaveReport.Location = new System.Drawing.Point(210, 247);
-            this.bttn_SaveReport.Name = "bttn_SaveReport";
-            this.bttn_SaveReport.Size = new System.Drawing.Size(75, 51);
-            this.bttn_SaveReport.TabIndex = 110;
-            this.bttn_SaveReport.Text = "Save Report";
-            this.bttn_SaveReport.UseVisualStyleBackColor = true;
-            this.bttn_SaveReport.Click += new System.EventHandler(this.bttn_SaveReport_Click);
             // 
             // saveReportFile
             // 
@@ -259,6 +272,7 @@
         private System.Windows.Forms.DataGridView dgvLogByMach;
         private System.Windows.Forms.Button bttn_SaveReport;
         private System.Windows.Forms.SaveFileDialog saveReportFile;
+        private System.Windows.Forms.Button bttnSendToWeb;
     }
 }
 

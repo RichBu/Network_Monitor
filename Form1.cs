@@ -8,12 +8,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+
 
 namespace WCO_NetMon
 {
+
     public partial class MainForm : Form
     {
         public LogFileClass LogFiles;
+        static HttpClient client = new HttpClient();
+        static Boolean isSendingLogFile = false;
+
+
+        public class sqlLogFileRec
+        {
+            public string fileName { get; set; }
+        }
+
 
         public MainForm()
         {
@@ -25,6 +39,41 @@ namespace WCO_NetMon
             dgvLogFiles.DataSource = new List<LogFileClass.Disp_LogFiles_rec>();
             LogFileList_refresh();
         }
+
+
+        static async Task<Boolean> CreateLogFileRec( sqlLogFileRec _logFileRec )
+        {
+            HttpResponseMessage response = await client.PostAsJsonAsync<sqlLogFileRec>(
+                "api/logfile2", _logFileRec );
+            response.EnsureSuccessStatusCode();
+
+            return response.IsSuccessStatusCode;
+            //return response.Headers.Location;
+        }
+
+
+        static async Task RunAsyncCreateLogFile(sqlLogFileRec _logFileRec)
+        {
+            //client had to be setup prior to entering here
+            try
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync<sqlLogFileRec>(
+                    "api/logfile", _logFileRec);
+                response.EnsureSuccessStatusCode();
+                var isCreateSuccessful = response.IsSuccessStatusCode;
+
+                //var isCreateSuccessful = await CreateLogFileRec( logFileRec );
+                //Console.WriteLine($"Write was successful {isCreateSuccessful}");
+               isSendingLogFile = false;
+                //Console.WriteLine($"Created at {url}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("---an error occurred");
+                Console.WriteLine(e.Message);
+            }
+        }
+
 
 
         private void LogFileList_refresh()
@@ -245,13 +294,25 @@ namespace WCO_NetMon
         private void bttn_LogFile_Click(object sender, EventArgs e)
         {
             //first open up the file input box
-            openFileDialog.ShowDialog();
-            string LogInputFile = openFileDialog.FileName;
-            LogFiles.NumLogFiles = LogFiles.NumLogFiles + 1;
+            DialogResult dialogResult = openFileDialog.ShowDialog();
+            if (dialogResult != System.Windows.Forms.DialogResult.Cancel)
+            {
+                //did not hit the cancel button
+                int numFiles = openFileDialog.FileNames.Count();
+                Console.WriteLine(numFiles);
 
-            LogFiles.Disp_LogFile_add(LogFiles.NumLogFiles, LogInputFile, 0);
+                for (int i = 0; i < numFiles; i++)
+                {
+                    //loop thru all of the file names
+                    string LogInputFile = openFileDialog.FileNames[i];
+                    LogFiles.NumLogFiles = LogFiles.NumLogFiles + 1;
+
+                    LogFiles.Disp_LogFile_add(LogFiles.NumLogFiles, LogInputFile, 0);
+                };
+            };
             LogFileList_refresh();
         }
+
 
         private void bttn_ReadLogs_Click(object sender, EventArgs e)
         {
@@ -303,6 +364,56 @@ namespace WCO_NetMon
             string Report_fileName = saveReportFile.FileName;
             LogFiles.SaveReportFile(Report_fileName, LogFiles.LogFile_In_table, LogFiles.Disp_LogFile_table,
                 LogFiles.Disp_LogMachEvents_table);
+        }
+
+
+        public void UploadLogFileName(string _fileName)
+        {
+            //upload the file to the AWS / mySQL database
+            while (isSendingLogFile)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+            // Create a new record
+            sqlLogFileRec logFileRec = new sqlLogFileRec
+            {
+                fileName = _fileName
+            };
+            //RunAsync().GetAwaiter().GetResult();
+            isSendingLogFile = true;
+            RunAsyncCreateLogFile(logFileRec).GetAwaiter();
+            while (isSendingLogFile)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+        }
+
+
+        public void UploadAllLogFileNames()
+        {
+            // Update port # in the following line.
+            client.BaseAddress = new Uri("https://devnetlogger.herokuapp.com/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //refresh the log file list
+            if (LogFiles.Disp_LogFile_table.Count() > 0)
+            {
+                for (int i=0; i<LogFiles.Disp_LogFile_table.Count(); i++)
+                {
+                    Console.WriteLine($"Sending file # {i} : {LogFiles.Disp_LogFile_table[i].fileName}");
+                    UploadLogFileName(LogFiles.Disp_LogFile_table[i].fileName);
+                };
+            };
+        }
+
+        private void bttnSendToWeb_Click(object sender, EventArgs e)
+        {
+            //upload to mySQL using backend API
+            UploadAllLogFileNames();
         }
     }
 }
