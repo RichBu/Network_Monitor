@@ -20,12 +20,81 @@ namespace WCO_NetMon
     {
         public LogFileClass LogFiles;
         static HttpClient client = new HttpClient();
+        static HttpClient client2 = new HttpClient();
+        static HttpClient client3 = new HttpClient();  //for eventByMach
         static Boolean isSendingLogFile = false;
+        static Boolean isSendingEventByTime = false;
+        static Boolean isSendingEventByMach = false;
 
 
         public class sqlLogFileRec
         {
             public string fileName { get; set; }
+        }
+
+
+        public class sqlEventByTimeRec
+        {
+            public string startTimeStr { get; set; }
+            public string endTimeStr { get; set; }
+            public string eventDuration { get; set; }
+            public int ontim_utc_yr { get; set; }
+            public int ontim_utc_mon { get; set; }
+            public int ontim_utc_day { get; set; }
+            public int ontim_utc_hr { get; set; }
+            public int ontim_utc_min { get; set; }
+            public int ontim_utc_sec { get; set; }
+
+            //off time
+            public int offtim_utc_yr { get; set; }
+            public int offtim_utc_mon { get; set; }
+            public int offtim_utc_day { get; set; }
+            public int offtim_utc_hr { get; set; }
+            public int offtim_utc_min { get; set; }
+            public int offtim_utc_sec { get; set; }
+
+            //duration time
+            public int durtim_utc_yr { get; set; }
+            public int durtim_utc_mon { get; set; }
+            public int durtim_utc_day { get; set; }
+            public int durtim_utc_hr { get; set; }
+            public int durtim_utc_min { get; set; }
+            public int durtim_utc_sec { get; set; }
+
+            //m1 thru m9
+            public string m1 { get; set; }
+            public string m2 { get; set; }
+            public string m3 { get; set; }
+            public string m4 { get; set; }
+            public string m5 { get; set; }
+            public string m6 { get; set; }
+            public string m7 { get; set; }
+            public string m8 { get; set; }
+            public string m9 { get; set; }
+        }
+
+
+        public class sqlEventByMachRec
+        {
+            public string machNumStr { get; set; }
+            public string machNum { get; set; }
+            public string eventStr { get; set; }
+            public string startTimeStr { get; set; }
+            public string endTimeStr { get; set; }
+            public int starttime_utc_yr { get; set; }
+            public int starttime_utc_mon { get; set; }
+            public int starttime_utc_day { get; set; }
+            public int starttime_utc_hr { get; set; }
+            public int starttime_utc_min { get; set; }
+            public int starttime_utc_sec { get; set; }
+
+            //off time
+            public int endtime_utc_yr { get; set; }
+            public int endtime_utc_mon { get; set; }
+            public int endtime_utc_day { get; set; }
+            public int endtime_utc_hr { get; set; }
+            public int endtime_utc_min { get; set; }
+            public int endtime_utc_sec { get; set; }
         }
 
 
@@ -415,5 +484,245 @@ namespace WCO_NetMon
             //upload to mySQL using backend API
             UploadAllLogFileNames();
         }
+
+
+
+
+        //for the event by time
+        static async Task RunAsyncCreateEventByTime(sqlEventByTimeRec _eventByTimeRec)
+        {
+            //client had to be setup prior to entering here
+            try
+            {
+                HttpResponseMessage response = await client2.PostAsJsonAsync<sqlEventByTimeRec>(
+                    "api/eventbytime", _eventByTimeRec);
+                response.EnsureSuccessStatusCode();
+                var isCreateSuccessful = response.IsSuccessStatusCode;
+
+                isSendingEventByTime = false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("---an error occurred");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+        public void UploadEventByTime(sqlEventByTimeRec _eventByTimeRec)
+        {
+            //upload the event by time record to the AWS / mySQL database
+            while (isSendingEventByTime)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+            isSendingEventByTime = true;
+            RunAsyncCreateEventByTime(_eventByTimeRec).GetAwaiter();
+            while (isSendingEventByTime)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+        }
+
+
+        public void UploadAllEventsByTime()
+        {
+            // Update port # in the following line.
+            client2.BaseAddress = new Uri("https://devnetlogger.herokuapp.com/");
+            client2.DefaultRequestHeaders.Accept.Clear();
+            client2.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //refresh the log file list
+            if (LogFiles.Disp_LogEvents_table.Count() > 0)
+            {
+                for (int i = 0; i < LogFiles.Disp_LogEvents_table.Count(); i++)
+                {
+                    sqlEventByTimeRec eventByTimeRec = new sqlEventByTimeRec();
+                    eventByTimeRec.startTimeStr = LogFiles.Disp_LogEvents_table[i].timeStartStr;
+                    eventByTimeRec.endTimeStr = LogFiles.Disp_LogEvents_table[i].timeStopStr;
+                    eventByTimeRec.eventDuration = LogFiles.Disp_LogEvents_table[i].timeDiffStr;
+
+                    string tempTimeString = eventByTimeRec.startTimeStr;
+                    string tempString = tempTimeString.Substring(0, 4);
+                    eventByTimeRec.ontim_utc_yr = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(5, 2);
+                    eventByTimeRec.ontim_utc_mon = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(8, 2);
+                    eventByTimeRec.ontim_utc_day = int.Parse(tempString);
+
+                    tempString = tempTimeString.Substring(11, 2);
+                    eventByTimeRec.ontim_utc_hr = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(14, 2);
+                    eventByTimeRec.ontim_utc_min = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(17, 2);
+                    eventByTimeRec.ontim_utc_sec = int.Parse(tempString);
+
+
+                    //stop time
+                    tempTimeString = eventByTimeRec.endTimeStr;
+                    tempString = tempTimeString.Substring(0, 4);
+                    eventByTimeRec.offtim_utc_yr = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(5, 2);
+                    eventByTimeRec.offtim_utc_mon = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(8, 2);
+                    eventByTimeRec.offtim_utc_day = int.Parse(tempString);
+
+                    tempString = tempTimeString.Substring(11, 2);
+                    eventByTimeRec.offtim_utc_hr = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(14, 2);
+                    eventByTimeRec.offtim_utc_min = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(17, 2);
+                    eventByTimeRec.offtim_utc_sec = int.Parse(tempString);
+
+
+                    //duration time
+                    tempTimeString = eventByTimeRec.eventDuration;
+                    eventByTimeRec.durtim_utc_yr  = int.Parse("0");
+                    eventByTimeRec.durtim_utc_mon = int.Parse("0");
+                    eventByTimeRec.durtim_utc_day = int.Parse("0");
+
+                    tempString = tempTimeString.Substring(0, 2);
+                    eventByTimeRec.durtim_utc_hr = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(3, 2);
+                    eventByTimeRec.durtim_utc_min = int.Parse(tempString);
+                    tempString = tempTimeString.Substring(6, 2);
+                    eventByTimeRec.durtim_utc_sec = int.Parse(tempString);
+
+                    eventByTimeRec.m1 = LogFiles.Disp_LogEvents_table[i].mach_01;
+                    eventByTimeRec.m2 = LogFiles.Disp_LogEvents_table[i].mach_02;
+                    eventByTimeRec.m3 = LogFiles.Disp_LogEvents_table[i].mach_03;
+                    eventByTimeRec.m4 = LogFiles.Disp_LogEvents_table[i].mach_04;
+                    eventByTimeRec.m5 = LogFiles.Disp_LogEvents_table[i].mach_05;
+                    eventByTimeRec.m6 = LogFiles.Disp_LogEvents_table[i].mach_06;
+                    eventByTimeRec.m7 = LogFiles.Disp_LogEvents_table[i].mach_07;
+                    eventByTimeRec.m8 = LogFiles.Disp_LogEvents_table[i].mach_08;
+                    eventByTimeRec.m9 = LogFiles.Disp_LogEvents_table[i].mach_09;
+
+                    Console.WriteLine($"Sending # {i} : {LogFiles.Disp_LogEvents_table[i].timeStartStr}");
+                    UploadEventByTime(eventByTimeRec);
+                };
+            };
+        }
+
+
+
+
+        //for the event by machine
+        static async Task RunAsyncCreateEventByMach(sqlEventByMachRec _eventByMachRec)
+        {
+            //client had to be setup prior to entering here
+            try
+            {
+                HttpResponseMessage response = await client3.PostAsJsonAsync<sqlEventByMachRec>(
+                    "api/eventbymach", _eventByMachRec);
+                response.EnsureSuccessStatusCode();
+                var isCreateSuccessful = response.IsSuccessStatusCode;
+
+                isSendingEventByMach = false;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("---an error occurred");
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+        public void UploadEventByMach(sqlEventByMachRec _eventByMachRec)
+        {
+            //upload the event by mach record to the AWS / mySQL database
+            while (isSendingEventByMach)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+            isSendingEventByMach = true;
+            RunAsyncCreateEventByMach(_eventByMachRec).GetAwaiter();
+            while (isSendingEventByMach)
+            {
+                //keep looping until the file is sent
+                Application.DoEvents();
+            };
+        }
+
+        public void UploadAllEventsByMach()
+        {
+            // Update port # in the following line.
+            client3.BaseAddress = new Uri("https://devnetlogger.herokuapp.com/");
+            client3.DefaultRequestHeaders.Accept.Clear();
+            client3.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //refresh the events by mach
+            if (LogFiles.Disp_LogMachEvents_table.Count() > 0)
+            {
+                for (int i = 0; i < LogFiles.Disp_LogMachEvents_table.Count(); i++)
+                {
+                    sqlEventByMachRec eventByMachRec = new sqlEventByMachRec();
+                    //check to see if the record should be added
+                    if((LogFiles.Disp_LogMachEvents_table[i].machNum =="") || (LogFiles.LeftStr(LogFiles.Disp_LogMachEvents_table[i].machNum,1)=="-") || (LogFiles.LeftStr(LogFiles.Disp_LogMachEvents_table[i].machNum, 1) != "M"))
+                    {
+                        //do nothing
+                    } else
+                    {
+                        eventByMachRec.machNumStr = LogFiles.LeftStr(LogFiles.Disp_LogMachEvents_table[i].machNum, 3);
+                        eventByMachRec.machNum = LogFiles.RightStr(eventByMachRec.machNumStr, 2);
+                        eventByMachRec.eventStr = LogFiles.Disp_LogMachEvents_table[i].machNum;
+                        eventByMachRec.startTimeStr = LogFiles.Disp_LogMachEvents_table[i].timeStartStr;
+                        eventByMachRec.endTimeStr = LogFiles.Disp_LogMachEvents_table[i].timeStopStr;
+
+                        string tempTimeString = eventByMachRec.startTimeStr;
+                        string tempString = tempTimeString.Substring(0, 4);
+                        eventByMachRec.starttime_utc_yr = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(5, 2);
+                        eventByMachRec.starttime_utc_mon = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(8, 2);
+                        eventByMachRec.starttime_utc_day = int.Parse(tempString);
+
+                        tempString = tempTimeString.Substring(11, 2);
+                        eventByMachRec.starttime_utc_hr = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(14, 2);
+                        eventByMachRec.starttime_utc_min = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(17, 2);
+                        eventByMachRec.starttime_utc_sec = int.Parse(tempString);
+
+
+                        //end time
+                        tempTimeString = eventByMachRec.endTimeStr;
+                        tempString = tempTimeString.Substring(0, 4);
+                        eventByMachRec.endtime_utc_yr = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(5, 2);
+                        eventByMachRec.endtime_utc_mon = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(8, 2);
+                        eventByMachRec.endtime_utc_day = int.Parse(tempString);
+
+                        tempString = tempTimeString.Substring(11, 2);
+                        eventByMachRec.endtime_utc_hr = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(14, 2);
+                        eventByMachRec.endtime_utc_min = int.Parse(tempString);
+                        tempString = tempTimeString.Substring(17, 2);
+                        eventByMachRec.endtime_utc_sec = int.Parse(tempString);
+
+                        Console.WriteLine($"Sending # {i} : {LogFiles.Disp_LogMachEvents_table[i].timeStartStr}");
+                        UploadEventByMach(eventByMachRec);
+                    };
+                };
+            };
+        }
+
+
+        private void bttnSendTimeToWeb_Click(object sender, EventArgs e)
+        {
+            UploadAllEventsByTime();
+        }
+
+        private void bttnSendMachEvtToWeb_click(object sender, EventArgs e)
+        {
+            UploadAllEventsByMach();
+        }
     }
 }
+

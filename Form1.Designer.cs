@@ -45,6 +45,8 @@
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.bttn_Quit = new System.Windows.Forms.Button();
             this.saveReportFile = new System.Windows.Forms.SaveFileDialog();
+            this.bttnSendTimeToWeb = new System.Windows.Forms.Button();
+            this.bttnSendMachEvtToWeb = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.Import.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvLogFiles)).BeginInit();
@@ -156,6 +158,7 @@
             // 
             // byTime
             // 
+            this.byTime.Controls.Add(this.bttnSendTimeToWeb);
             this.byTime.Controls.Add(this.dgvLogEvent);
             this.byTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.byTime.Location = new System.Drawing.Point(4, 29);
@@ -178,6 +181,7 @@
             // 
             // byMach
             // 
+            this.byMach.Controls.Add(this.bttnSendMachEvtToWeb);
             this.byMach.Controls.Add(this.bttn_SaveReport);
             this.byMach.Controls.Add(this.dgvLogByMach);
             this.byMach.Location = new System.Drawing.Point(4, 29);
@@ -230,6 +234,26 @@
             this.saveReportFile.FilterIndex = 0;
             this.saveReportFile.Title = "Report File to Save To";
             // 
+            // bttnSendTimeToWeb
+            // 
+            this.bttnSendTimeToWeb.Location = new System.Drawing.Point(287, 244);
+            this.bttnSendTimeToWeb.Name = "bttnSendTimeToWeb";
+            this.bttnSendTimeToWeb.Size = new System.Drawing.Size(116, 51);
+            this.bttnSendTimeToWeb.TabIndex = 109;
+            this.bttnSendTimeToWeb.Text = "Send Times to Web";
+            this.bttnSendTimeToWeb.UseVisualStyleBackColor = true;
+            this.bttnSendTimeToWeb.Click += new System.EventHandler(this.bttnSendTimeToWeb_Click);
+            // 
+            // bttnSendMachEvtToWeb
+            // 
+            this.bttnSendMachEvtToWeb.Location = new System.Drawing.Point(324, 247);
+            this.bttnSendMachEvtToWeb.Name = "bttnSendMachEvtToWeb";
+            this.bttnSendMachEvtToWeb.Size = new System.Drawing.Size(116, 51);
+            this.bttnSendMachEvtToWeb.TabIndex = 111;
+            this.bttnSendMachEvtToWeb.Text = "Send Mach Evt to Web";
+            this.bttnSendMachEvtToWeb.UseVisualStyleBackColor = true;
+            this.bttnSendMachEvtToWeb.Click += new System.EventHandler(this.bttnSendMachEvtToWeb_click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -273,6 +297,8 @@
         private System.Windows.Forms.Button bttn_SaveReport;
         private System.Windows.Forms.SaveFileDialog saveReportFile;
         private System.Windows.Forms.Button bttnSendToWeb;
+        private System.Windows.Forms.Button bttnSendTimeToWeb;
+        private System.Windows.Forms.Button bttnSendMachEvtToWeb;
     }
 }
 
